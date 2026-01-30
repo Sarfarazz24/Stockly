@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser"); // to split the data we used it
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -16,17 +17,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: ["https://zerodha-frontend.onrender.com", "http://localhost:3000", "http://localhost:3001"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
+
 //importing models
 const { HoldingsModel } = require("./model/HoldingsModel");
 const { PositionsModel } = require("./model/PosititionsModel");
 const { OrdersModel } = require("./model/OrdersModel");
-
-app.use(cors());
 
 const authRoute = require("./Routes/AuthRoute");
 const holdingRoute = require("./Routes/HoldingRoute");
@@ -51,25 +51,82 @@ app.use("/holding", holdingRoute);
 app.use("/position", positionRoute);
 
 app.get("/allHoldings", async (req, res) => {
-  let allholdings = await HoldingsModel.find({});
-  res.json(allholdings);
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
+      if (err) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      // Sample data for testing without database
+      const sampleHoldings = [
+        { name: "TCS", qty: 10, avg: 3100, price: 3200, net: "+3.23%", day: "+2.45%" },
+        { name: "INFY", qty: 5, avg: 1400, price: 1450, net: "+3.57%", day: "+1.25%" },
+        { name: "RELIANCE", qty: 8, avg: 2500, price: 2600, net: "+4.00%", day: "+3.12%" }
+      ];
+      
+      res.json(sampleHoldings);
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 app.get("/allPositions", async (req, res) => {
-  let allPositions = await PositionsModel.find({});
-  res.json(allPositions);
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
+      if (err) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      // Sample data for testing without database
+      const samplePositions = [
+        { product: "MIS", name: "TCS", qty: -2, avg: 3150, price: 3200, net: "+1.59%", day: "+2.45%", isLoss: false },
+        { product: "CNC", name: "INFY", qty: 3, avg: 1380, price: 1450, net: "+5.07%", day: "+1.25%", isLoss: false },
+        { product: "NRML", name: "RELIANCE", qty: -1, avg: 2550, price: 2600, net: "+1.96%", day: "+3.12%", isLoss: false }
+      ];
+      
+      res.json(samplePositions);
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // entering the new data like buy and sell into the database
 app.post("/newOrder", async (req, res) => {
-  let newOrders = new OrdersModel({
-    name: req.body.name,
-    qty: req.body.qty,
-    price: req.body.price,
-    mode: req.body.mode,
-  });
-  newOrders.save();
-  res.send("data saved!");
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
+      if (err) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      // For now, just return success (we can add database storage later)
+      console.log("Order received:", req.body);
+      res.status(200).json({ 
+        message: "Order placed successfully",
+        success: true,
+        order: req.body
+      });
+    });
+  } catch (error) {
+    console.error("Error placing order:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 app.listen(PORT, () => {

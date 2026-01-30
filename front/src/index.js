@@ -5,7 +5,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./landing_page/home/HomePage";
 import SignupForm from "./landing_page/signup/SignupForm";
 import AboutPage from "./landing_page/about/AboutPage";
-import Hero from "./landing_page/products/Hero";
 import PricingPage from "./landing_page/pricing/PricingPage";
 import SupportTicket from "./landing_page/support/SupportTicket";
 import Navbar from "./Navbar";
@@ -13,6 +12,7 @@ import LoginForm from "./landing_page/signup/LoginForm";
 import Footer from "./Footer";
 import NotFound from "./landing_page/NotFound";
 import ProductPage from "./landing_page/products/ProductPage";
+import DashboardPage from "./landing_page/dashboard/DashboardPage";
 import "react-toastify/dist/ReactToastify.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -27,8 +27,8 @@ root.render(
       <Route path="/pricing" element={<PricingPage />}></Route>
       <Route path="/support" element={<SupportTicket />}></Route>
       <Route path="/login" element={<LoginForm />}></Route>
+      <Route path="/dashboard" element={<DashboardPage />}></Route>
       <Route path="*" element={<NotFound />}></Route>{" "}
-      {/*  i have give star because if the search that does not match with any other search then it displays the not found section*/}
     </Routes>
     <Footer /> {/* Footer is common in all so I  kept here! */}
   </BrowserRouter>

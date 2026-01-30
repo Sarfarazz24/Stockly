@@ -1,4 +1,5 @@
-const User = require("../model/UserModel");
+// const User = require("../model/UserModel");
+const { findUserById } = require("../tempUserStore");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
@@ -13,7 +14,7 @@ module.exports.userverification = async (req, res) => {
       return res.json({ status: false });
     }
 
-    const user = await User.findById(data.id);
+    const user = findUserById(data.id);
     if (user) {
       req.user = { username: user.username };
       return res.json({ status: true, user: req.user.username });
