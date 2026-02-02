@@ -1,4 +1,4 @@
-# Zerodha Trading Dashboard
+# Stockly Trading Dashboard
 
 A full-stack trading application with authentication, real-time portfolio tracking, and buy/sell functionality.
 
